@@ -8,7 +8,6 @@ import { collect } from "./collect";
 import { generateScript } from "./script";
 import { capture } from "./capture";
 import { generateVoice } from "./voice";
-import { generatePixelArt } from "./pixel";
 import { generateOpening } from "./runway";
 import { render } from "./render";
 import { deliver } from "./deliver";
@@ -18,7 +17,6 @@ const steps: Record<string, (ctx: PipelineContext) => Promise<void>> = {
   script: generateScript,
   capture,
   voice: generateVoice,
-  pixel: generatePixelArt,
   runway: generateOpening,
   render,
   deliver,

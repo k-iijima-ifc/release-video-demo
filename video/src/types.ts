@@ -11,8 +11,6 @@ export type Scene = {
   heading?: string;
   /** summary：要点（3つまで） */
   points?: string[];
-  /** summary：PixelLab に渡すアイコンの説明（英語） */
-  icon?: string;
   /** tests：テスト結果 */
   results?: TestResult[];
 };
@@ -32,16 +30,26 @@ export type SceneAssets = {
   narrationSeconds?: number;
   /** ナレーションの音量の倍率。生成された音声の大きさがまちまちなのでパイプラインがそろえる */
   narrationVolume?: number;
-  icon?: string;
   beforeImage?: string;
   afterImage?: string;
+};
+
+export type CharacterAnimation = "walk" | "wave" | "talk" | "point" | "celebrate";
+
+/** 案内役キャラのアニメーション（prepare-assets の animate で作る assets/character/animations.json） */
+export type CharacterSprites = {
+  characterId: string;
+  /** 1秒あたりのコマ数 */
+  fps: number;
+  /** 動きの名前 → コマ画像のパス（public からの相対） */
+  animations: Partial<Record<CharacterAnimation, string[]>>;
 };
 
 export type ReleaseVideoProps = {
   script: ReleaseScript;
   assets: {
     openingVideo?: string;
-    character?: string;
+    character?: CharacterSprites;
     bgm?: string;
     /** 全動画で共通の効果音 */
     sfx?: { opening?: string; success?: string };

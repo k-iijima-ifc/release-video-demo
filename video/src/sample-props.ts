@@ -13,7 +13,6 @@ export const sampleProps: ReleaseVideoProps = {
         heading: "何が変わったか",
         narration: "問い合わせフォームで、入力漏れやメールアドレスの誤りをその場でお知らせするようになりました。",
         points: ["入力漏れをその場でお知らせ", "メールアドレスの形式をチェック", "送信前に誤りに気づける"],
-        icon: "shield with check mark",
       },
       {
         id: "before_after",

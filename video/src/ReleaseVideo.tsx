@@ -2,6 +2,7 @@ import { AbsoluteFill, Audio, Sequence, Series, staticFile } from "remotion";
 import { loadFont } from "@remotion/google-fonts/NotoSansJP";
 import type { ReleaseVideoProps, Scene } from "./types";
 import { SceneView } from "./scenes/SceneView";
+import { Character } from "./scenes/Character";
 
 export const FPS = 30;
 const DEFAULT_SCENE_SECONDS = 4;
@@ -32,6 +33,7 @@ export const ReleaseVideo = (props: ReleaseVideoProps) => (
         return (
           <Series.Sequence key={scene.id} durationInFrames={sceneDurationInFrames(scene, props)}>
             <SceneView scene={scene} props={props} />
+            {props.assets.character && <Character sprites={props.assets.character} scene={scene} />}
             {sfx && <Audio src={staticFile(sfx)} volume={0.5} />}
             {narration && (
               <Sequence from={scene.id === "opening" ? OPENING_NARRATION_DELAY : 0}>

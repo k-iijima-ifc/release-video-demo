@@ -26,7 +26,6 @@ export const SceneView = ({ scene, props }: { scene: Scene; props: ReleaseVideoP
       </div>
 
       <div style={{ display: "flex", gap: 48, alignItems: "center", flex: 1 }}>
-        {assets.icon && <Img src={staticFile(assets.icon)} style={{ width: 240, imageRendering: "pixelated" }} />}
         <div style={{ flex: 1 }}>
           {scene.heading && <h1 style={{ fontSize: 72, margin: "0 0 32px" }}>{scene.heading}</h1>}
           {scene.points && (
@@ -62,9 +61,6 @@ export const SceneView = ({ scene, props }: { scene: Scene; props: ReleaseVideoP
             </div>
           )}
         </div>
-        {props.assets.character && (
-          <Img src={staticFile(props.assets.character)} style={{ width: 200, imageRendering: "pixelated" }} />
-        )}
       </div>
 
       <div style={{ fontSize: 40, lineHeight: 1.5, background: "rgb(0 0 0 / 0.45)", padding: "16px 24px", borderRadius: 12 }}>

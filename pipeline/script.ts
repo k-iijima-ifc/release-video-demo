@@ -22,7 +22,7 @@ function buildPrompt(sources: Sources): string {
   "title": "動画のタイトル（〜しました、の形で30文字以内）",
   "scenes": [
     { "id": "opening", "heading": "見出し", "narration": "導入の一文" },
-    { "id": "summary", "heading": "何が変わったか", "narration": "...", "points": ["要点（20文字以内）を3つまで"], "icon": "この変更を表すアイコンの英語の説明（PixelLabでドット絵にする。例: red warning sign with exclamation mark）" },
+    { "id": "summary", "heading": "何が変わったか", "narration": "...", "points": ["要点（20文字以内）を3つまで"] },
     { "id": "before_after", "heading": "変更前と変更後", "narration": "変更前と変更後の画面の違いの説明" },
     { "id": "tests", "heading": "確認したこと", "narration": "確認した内容と結果", "results": [{ "index": テスト番号, "case": "画面に出す短い説明（25文字以内）" }] },
     { "id": "closing", "heading": "見出し", "narration": "締めの一文（課題キーの読み方を含める）" }
