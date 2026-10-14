@@ -25,6 +25,8 @@ export type Sources = {
   issue: { summary: string; description: string; url: string };
   pr: { number: number; title: string; body: string; url: string; mergeCommit: string; baseCommit: string };
   diff: string;
+  /** 変更後の画面のソース（撮影手順を考えるため） */
+  appSource: string;
   tests: TestCaseResult[];
 };
 

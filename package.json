@@ -13,6 +13,7 @@
     "test": "playwright test",
     "check:env": "tsx pipeline/check-env.ts",
     "usage": "tsx pipeline/usage.ts",
+    "demo:issue": "tsx pipeline/create-demo-issue.ts",
     "pipeline": "tsx pipeline/run.ts",
     "prepare-assets": "tsx pipeline/prepare-assets.ts",
     "video:studio": "remotion studio video/src/index.ts",

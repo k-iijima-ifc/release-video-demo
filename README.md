@@ -38,9 +38,24 @@ Claude Code では `/fix-issue AISTUDYDEMO-1`（課題を実装してPR作成）
 |---|---|---|
 | ci | PR、main への push | 型チェックとテスト |
 | check-env | 手動 | Secrets / Variables の疎通確認 |
-| create-demo-issue | 手動 | デモ用の改善要望をBacklogに起票（リハーサルのたびに使える） |
+| create-demo-issue | 手動（パターンを選ぶ） | デモ用の改善要望をBacklogに起票（リハーサルのたびに使える） |
 | fix-issue | 手動（課題キーを指定） | Claude Code が課題を読んで実装し、PRを作る（/fix-issue のクラウド版） |
 | release-video | `feature/<課題キー>` のPRのマージ、または手動 | 動画生成。自動実行は Variables の `RELEASE_VIDEO_ENABLED=true` のときだけ |
+
+## デモの改善要望パターン
+
+`pipeline/demo-issues.ts` に定義。どれも改善前のアプリ（タグ `demo-baseline`）に対して独立に対応できる。
+
+| パターン | 課題の件名 | 動画で見える変化 |
+|---|---|---|
+| input-check | 問い合わせフォームに入力チェックを追加 | 誤りが各項目の下に赤字で出る |
+| confirm | 問い合わせフォームに送信前の確認画面を追加 | 送信前に入力内容の確認画面が出る |
+| counter | お問い合わせ内容の欄に残り文字数を表示 | 残り文字数が出て、超えると赤字になる |
+| receipt | 送信完了画面に受付番号と送信内容の控えを表示 | 完了画面に受付番号と控えが出る |
+
+変更前と変更後の画面写真を撮る操作は、台本と一緒に Claude が変更内容から考える（`script.json` の `capture`）。
+
+別のパターンを試す前に、アプリを改善前に戻す（`git checkout demo-baseline -- app` をPRにしてマージする）。
 
 ## ライセンス上の注意
 
