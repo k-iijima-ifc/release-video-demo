@@ -9,6 +9,7 @@ on:
         required: true
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 
@@ -62,6 +63,12 @@ jobs:
             --max-turns 80 \
             --output-format stream-json --verbose > out/claude-log.jsonl
           jq -r 'select(.type == "result") | .result' out/claude-log.jsonl >> "$GITHUB_STEP_SUMMARY"
+
+      - name: PRのブランチで ci を実行
+        run: |
+          if git ls-remote --exit-code --heads origin "feature/$ISSUE_KEY" >/dev/null; then
+            gh workflow run ci --ref "feature/$ISSUE_KEY"
+          fi
 
       - uses: actions/upload-artifact@v7
         if: always()

@@ -1,6 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "enabledMcpjsonServers": ["backlog"],
+  "enabledMcpjsonServers": [
+    "backlog"
+  ],
   "permissions": {
     "allow": [
       "mcp__backlog__get_issue",
@@ -14,6 +16,8 @@
       "Bash(npm run build:app)",
       "Bash(npm run check:env)",
       "Bash(npm run pipeline *)",
+      "Bash(printenv BACKLOG_DOMAIN)",
+      "Bash(git check-ignore *)",
       "Bash(ls *)",
       "Bash(git status)",
       "Bash(git status *)",
