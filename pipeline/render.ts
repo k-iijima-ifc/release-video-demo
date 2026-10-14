@@ -1,5 +1,7 @@
 // script.json と素材から out/<課題キー>/props.json を作り、Remotion で動画を書き出す
 import { existsSync } from "node:fs";
+import { buildCaptions } from "./lib/captions";
+import type { Alignment } from "./lib/elevenlabs";
 import { join } from "node:path";
 import { run } from "./lib/exec";
 import { paths, readJson, readManifest, writeJson, type PipelineContext } from "./lib/context";
@@ -13,6 +15,13 @@ const SFX = { opening: "sfx/opening.mp3", success: "sfx/success.mp3" };
 export async function render(ctx: PipelineContext): Promise<void> {
   const script = readJson<ReleaseScript>(paths(ctx).script);
   const assets = readManifest(ctx);
+  for (const scene of script.scenes) {
+    const alignmentPath = join(ctx.assetsDir, `narration-${scene.id}.alignment.json`);
+    const sceneAssets = assets.scenes[scene.id];
+    if (sceneAssets && existsSync(alignmentPath)) {
+      sceneAssets.captions = buildCaptions(scene.narration, scene.speech ?? scene.narration, readJson<Alignment>(alignmentPath));
+    }
+  }
   const sfx = Object.fromEntries(Object.entries(SFX).filter(([, p]) => existsSync(join(ctx.publicDir, p))));
   const characterJson = join(ctx.publicDir, CHARACTER_JSON);
   const character = existsSync(characterJson) ? readJson<CharacterSprites>(characterJson) : undefined;

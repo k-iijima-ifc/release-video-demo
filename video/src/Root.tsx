@@ -1,5 +1,6 @@
 import { Composition, type CalculateMetadataFunction } from "remotion";
-import { ReleaseVideo, sceneDurationInFrames, FPS } from "./ReleaseVideo";
+import { ReleaseVideo, sceneDurationInFrames } from "./ReleaseVideo";
+import { FPS } from "./timing";
 import { sampleProps } from "./sample-props";
 import type { ReleaseVideoProps } from "./types";
 

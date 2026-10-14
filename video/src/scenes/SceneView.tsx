@@ -1,12 +1,24 @@
-import { AbsoluteFill, Img, OffthreadVideo, interpolate, staticFile, useCurrentFrame } from "remotion";
-import type { ReleaseVideoProps, Scene } from "../types";
+import { AbsoluteFill, Img, OffthreadVideo, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import type { Caption, ReleaseVideoProps, Scene } from "../types";
+import { narrationDelay } from "../timing";
 import { CHARACTER_SPACE } from "./Character";
+
+/** オープニングのタイトルが1行に収まる文字の大きさ（右側はキャラの場所として空ける） */
+const titleFontSize = (title: string, width: number) => Math.min(80, Math.floor(width / Math.max(title.length, 1)));
+
+/** 読み上げ中の1文を返す（字幕の時刻がなければナレーション全体） */
+function currentCaption(scene: Scene, captions: Caption[] | undefined, seconds: number): string {
+  if (!captions?.length) return scene.narration;
+  return [...captions].reverse().find((c) => c.start <= seconds)?.text ?? captions[0].text;
+}
 
 // フェーズ3で各シーンを作り込む。いまは素材の有無に応じて最低限の表示を行う
 export const SceneView = ({ scene, props }: { scene: Scene; props: ReleaseVideoProps }) => {
   const frame = useCurrentFrame();
   const opacity = interpolate(frame, [0, 10], [0, 1], { extrapolateRight: "clamp" });
+  const { fps } = useVideoConfig();
   const assets = props.assets.scenes[scene.id] ?? {};
+  const caption = currentCaption(scene, assets.captions, (frame - narrationDelay(scene.id)) / fps);
 
   if (scene.id === "opening" && props.assets.openingVideo) {
     return (
@@ -14,7 +26,16 @@ export const SceneView = ({ scene, props }: { scene: Scene; props: ReleaseVideoP
         <OffthreadVideo src={staticFile(props.assets.openingVideo)} muted style={{ objectFit: "cover" }} />
         <AbsoluteFill style={{ justifyContent: "flex-end", padding: 96, background: "linear-gradient(transparent 50%, rgb(0 0 0 / 0.7))" }}>
           <div style={{ fontSize: 36, color: "#cbd5e1", opacity }}>{scene.heading}</div>
-          <h1 style={{ fontSize: 80, margin: "8px 0 0", opacity }}>{props.script.title}</h1>
+          <h1
+            style={{
+              fontSize: titleFontSize(props.script.title, 1920 - 192 - (props.assets.character ? CHARACTER_SPACE : 0)),
+              margin: "8px 0 0",
+              whiteSpace: "nowrap",
+              opacity,
+            }}
+          >
+            {props.script.title}
+          </h1>
         </AbsoluteFill>
       </AbsoluteFill>
     );
@@ -65,7 +86,7 @@ export const SceneView = ({ scene, props }: { scene: Scene; props: ReleaseVideoP
       </div>
 
       <div style={{ fontSize: 40, lineHeight: 1.5, marginRight: props.assets.character ? CHARACTER_SPACE - 96 : 0, background: "rgb(0 0 0 / 0.45)", padding: "16px 24px", borderRadius: 12 }}>
-        {scene.narration}
+        {caption}
       </div>
     </AbsoluteFill>
   );

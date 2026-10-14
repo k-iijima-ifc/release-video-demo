@@ -8,7 +8,7 @@ import { join } from "node:path";
 export async function generateVoice(ctx: PipelineContext): Promise<void> {
   const script = readJson<ReleaseScript>(paths(ctx).script);
   for (const scene of script.scenes) {
-    const speech = await textToSpeech(scene.narration);
+    const speech = await textToSpeech(scene.speech ?? scene.narration);
     const narration = saveAsset(ctx, `narration-${scene.id}.mp3`, speech.audio);
     const level = measureAudio(join(ctx.publicDir, narration));
     const narrationVolume = normalizeGain(level);

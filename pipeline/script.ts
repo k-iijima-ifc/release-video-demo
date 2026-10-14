@@ -14,18 +14,19 @@ function buildPrompt(sources: Sources): string {
 - 読み手は利用部門。技術用語（バリデーション、コンポーネント、フォーカス等）は使わず、利用者から見た変化で書く
 - ナレーションは一文40文字程度まで。全シーン合計で300〜400文字
 - 材料に書かれていないことは書かない。不合格のテストがあれば隠さずに伝える
-- ナレーションは読み上げに使う。英字の略語や課題キーは読み方をカタカナで書く（例：AISTUDYDEMO-1 →「エーアイ スタディ デモ イチ」）
-- 画面に出す文字（title、heading、points、results[].case）は通常の表記でよい
+- narration は字幕に出す文で、通常の表記で書く
+- speech は読み上げ用で、narration と同じ文を同じ順に並べ、英字の略語や課題キーだけ読み方をカタカナにする（例：AISTUDYDEMO-1 →「エーアイ スタディ デモ イチ」）。置き換えるものがなければ narration と同じでよい
+- 字幕は1文ずつ表示するので、1文は40文字程度までにする
 
 # 出力するJSONの形
 {
   "title": "動画のタイトル（〜しました、の形で30文字以内）",
   "scenes": [
-    { "id": "opening", "heading": "見出し", "narration": "導入の一文" },
-    { "id": "summary", "heading": "何が変わったか", "narration": "...", "points": ["要点（20文字以内）を3つまで"] },
-    { "id": "before_after", "heading": "変更前と変更後", "narration": "変更前と変更後の画面の違いの説明" },
-    { "id": "tests", "heading": "確認したこと", "narration": "確認した内容と結果", "results": [{ "index": テスト番号, "case": "画面に出す短い説明（25文字以内）" }] },
-    { "id": "closing", "heading": "見出し", "narration": "締めの一文（課題キーの読み方を含める）" }
+    { "id": "opening", "heading": "見出し", "narration": "導入の一文", "speech": "読み上げ用" },
+    { "id": "summary", "heading": "何が変わったか", "narration": "...", "speech": "...", "points": ["要点（20文字以内）を3つまで"] },
+    { "id": "before_after", "heading": "変更前と変更後", "narration": "変更前と変更後の画面の違いの説明", "speech": "..." },
+    { "id": "tests", "heading": "確認したこと", "narration": "確認した内容と結果", "speech": "...", "results": [{ "index": テスト番号, "case": "画面に出す短い説明（25文字以内）" }] },
+    { "id": "closing", "heading": "見出し", "narration": "締めの一文（課題キーを含める）", "speech": "..." }
   ]
 }
 results には下のテスト結果をすべて、番号どおりに含めること（合否はこちらで実際の結果を入れる）。

@@ -6,7 +6,10 @@ export type TestResult = { case: string; pass: boolean };
 
 export type Scene = {
   id: SceneId;
+  /** ナレーションの文（字幕に表示する通常の表記） */
   narration: string;
+  /** 読み上げ用の文。narration と同じ文の並びで、英字の略語や課題キーだけ読み方（カタカナ）にしたもの */
+  speech?: string;
   /** 画面に出す見出し（省略時はナレーションのみ） */
   heading?: string;
   /** summary：要点（3つまで） */
@@ -23,6 +26,9 @@ export type ReleaseScript = {
   scenes: Scene[];
 };
 
+/** 字幕の1文と、ナレーションの頭からの表示開始時刻（秒） */
+export type Caption = { text: string; start: number };
+
 /** 生成した素材のパス（assets/ からの相対パス）。パイプラインが埋める */
 export type SceneAssets = {
   narration?: string;
@@ -30,6 +36,8 @@ export type SceneAssets = {
   narrationSeconds?: number;
   /** ナレーションの音量の倍率。生成された音声の大きさがまちまちなのでパイプラインがそろえる */
   narrationVolume?: number;
+  /** 読み上げに合わせて1文ずつ出す字幕（render が作る） */
+  captions?: Caption[];
   beforeImage?: string;
   afterImage?: string;
 };
