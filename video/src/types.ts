@@ -14,8 +14,10 @@ export type Scene = {
   heading?: string;
   /** summary：要点（3つまで） */
   points?: string[];
-  /** tests：テスト結果 */
+  /** tests：表に出すテスト結果（不合格と、このPRで追加・変更したもの） */
   results?: TestResult[];
+  /** tests：実行したテスト全体の件数（表に出さなかったものを「ほか◯件」として表示する） */
+  testSummary?: { total: number; passed: number };
 };
 
 /**

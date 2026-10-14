@@ -67,7 +67,9 @@ export async function collect(ctx: PipelineContext): Promise<void> {
   let diff = run("gh", ["pr", "diff", String(number)]);
   if (diff.length > MAX_DIFF_CHARS) diff = diff.slice(0, MAX_DIFF_CHARS) + "\n…（以下省略）";
 
-  const tests = runTests(ctx);
+  // 差分で追加・変更された test("…") の名前に印を付ける
+  const addedTitles = new Set([...diff.matchAll(/^\+\s*test\(\s*["'`](.+?)["'`]/gm)].map((m) => m[1]));
+  const tests = runTests(ctx).map((t) => ({ ...t, added: addedTitles.has(t.title) }));
   const sources: Sources = {
     issueKey: ctx.issueKey,
     issue: await fetchIssue(ctx.issueKey),
@@ -77,5 +79,7 @@ export async function collect(ctx: PipelineContext): Promise<void> {
     tests,
   };
   writeJson(paths(ctx).sources, sources);
-  console.log(`  PR #${pr.number}、テスト ${tests.length} 件（不合格 ${tests.filter((t) => !t.ok).length} 件）`);
+  console.log(
+    `  PR #${pr.number}、テスト ${tests.length} 件（今回追加・変更 ${tests.filter((t) => t.added).length} 件、不合格 ${tests.filter((t) => !t.ok).length} 件）`,
+  );
 }

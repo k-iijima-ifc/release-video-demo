@@ -6,7 +6,9 @@ import type { CaptureStep, ReleaseScript, Scene, SceneId } from "../video/src/ty
 const SCENE_IDS: SceneId[] = ["opening", "summary", "before_after", "tests", "closing"];
 
 function buildPrompt(sources: Sources): string {
-  const tests = sources.tests.map((t, i) => `${i}. ${t.ok ? "合格" : "不合格"}：${t.title}`).join("\n");
+  const tests = sources.tests
+    .map((t, i) => `${i}. ${t.ok ? "合格" : "不合格"}${t.added ? "（今回追加）" : ""}：${t.title}`)
+    .join("\n");
   return `あなたは社内の利用部門向けに、システム改修のリリース紹介動画の台本を書く担当者です。
 次の材料だけを使って、約60〜75秒の動画の台本をJSONで書いてください。ツールは使わず、JSONだけを出力してください。
 
@@ -29,7 +31,8 @@ function buildPrompt(sources: Sources): string {
     { "id": "closing", "heading": "見出し", "narration": "締めの一文（課題キーを含める）", "speech": "..." }
   ]
 }
-results には下のテスト結果をすべて、番号どおりに含めること（合否はこちらで実際の結果を入れる）。
+results には下のテスト結果をすべて、番号どおりに含めること（合否はこちらで実際の結果を入れる。画面には今回追加したテストと不合格のテストだけを出す）。
+tests の narration は今回追加したテストの内容を中心に書き、これまでのテストも含めた全体の結果にも触れること。
 
 さらに、トップレベルに "capture" を加えること。これは「変更前と変更後」のシーンで使う画面写真を撮るための操作手順で、
 変更前と変更後の画面に同じ操作をして撮り比べる。違いが一番よくわかる状態で終わるようにすること。
@@ -103,14 +106,20 @@ function finalize(draft: { title: string; scenes: DraftScene[]; capture?: unknow
   });
   const tests = scenes.find((s) => s.id === "tests")!;
   const labels = new Map((tests.results ?? []).map((r) => [r.index, r.case]));
-  const results = sources.tests.map((t, i) => ({ case: labels.get(i) ?? t.title, pass: t.ok }));
+  // 表に出すのは不合格と今回追加したテスト（不合格を先に）。どちらもなければ全件
+  const indexed = sources.tests.map((t, i) => ({ ...t, i }));
+  const focus = indexed.filter((t) => !t.ok || t.added);
+  const results = (focus.length > 0 ? focus : indexed)
+    .sort((a, b) => Number(a.ok) - Number(b.ok))
+    .map((t) => ({ case: labels.get(t.i) ?? t.title, pass: t.ok }));
+  const testSummary = { total: sources.tests.length, passed: sources.tests.filter((t) => t.ok).length };
 
   return {
     issueKey: sources.issueKey,
     issueUrl: sources.issue.url,
     title: draft.title,
     audience: "利用部門",
-    scenes: scenes.map((s) => (s.id === "tests" ? { ...s, results } : (s as Scene))),
+    scenes: scenes.map((s) => (s.id === "tests" ? { ...s, results, testSummary } : (s as Scene))),
     capture: validCapture(draft.capture),
   };
 }

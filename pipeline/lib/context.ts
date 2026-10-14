@@ -17,7 +17,12 @@ export type PipelineContext = {
   assetsDir: string;
 };
 
-export type TestCaseResult = { title: string; ok: boolean };
+export type TestCaseResult = {
+  title: string;
+  ok: boolean;
+  /** このPRで追加・変更したテスト（差分に test("…") の行がある） */
+  added?: boolean;
+};
 
 /** collect が集めた材料（out/<課題キー>/sources.json） */
 export type Sources = {

@@ -1,10 +1,41 @@
 import { AbsoluteFill, Img, OffthreadVideo, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
-import type { Caption, ReleaseVideoProps, Scene } from "../types";
+import type { Caption, ReleaseVideoProps, Scene, TestResult } from "../types";
 import { narrationDelay } from "../timing";
 import { CHARACTER_SPACE } from "./Character";
 
 /** オープニングのタイトルが1行に収まる文字の大きさ（右側はキャラの場所として空ける） */
 const titleFontSize = (title: string, width: number) => Math.min(80, Math.floor(width / Math.max(title.length, 1)));
+
+/** 「確認したこと」の表に出す最大の行数。これを超える分と、表に出さなかったテストは「ほか◯件」にまとめる */
+const MAX_TEST_ROWS = 6;
+
+function TestTable({ results, summary }: { results: TestResult[]; summary?: { total: number; passed: number } }) {
+  const rows = results.slice(0, MAX_TEST_ROWS);
+  const total = summary?.total ?? results.length;
+  const passed = summary?.passed ?? results.filter((r) => r.pass).length;
+  const restTotal = total - rows.length;
+  const restFailed = restTotal - (passed - rows.filter((r) => r.pass).length);
+  return (
+    <table style={{ fontSize: 40, borderSpacing: "32px 12px", marginLeft: -32 }}>
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r.case}>
+            <td>{r.case}</td>
+            <td style={{ color: r.pass ? "#4ade80" : "#f87171", fontWeight: 700 }}>{r.pass ? "合格" : "不合格"}</td>
+          </tr>
+        ))}
+        {restTotal > 0 && (
+          <tr style={{ fontSize: 34, color: "#94a3b8" }}>
+            <td>ほかのテスト {restTotal} 件（これまでの機能の確認など）</td>
+            <td style={{ color: restFailed === 0 ? "#4ade80" : "#f87171", fontWeight: 700 }}>
+              {restFailed === 0 ? "すべて合格" : `${restFailed}件 不合格`}
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  );
+}
 
 /** 読み上げ中の1文を返す（字幕の時刻がなければナレーション全体） */
 function currentCaption(scene: Scene, captions: Caption[] | undefined, seconds: number): string {
@@ -57,18 +88,7 @@ export const SceneView = ({ scene, props }: { scene: Scene; props: ReleaseVideoP
               ))}
             </ul>
           )}
-          {scene.results && (
-            <table style={{ fontSize: 40, borderSpacing: "32px 12px" }}>
-              <tbody>
-                {scene.results.map((r) => (
-                  <tr key={r.case}>
-                    <td>{r.case}</td>
-                    <td style={{ color: r.pass ? "#4ade80" : "#f87171", fontWeight: 700 }}>{r.pass ? "合格" : "不合格"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          {scene.results && <TestTable results={scene.results} summary={scene.testSummary} />}
           {assets.beforeImage && assets.afterImage && (
             <div style={{ display: "flex", gap: 48, alignItems: "flex-start" }}>
               {[
