@@ -1,6 +1,6 @@
 ---
 description: 課題のリリース紹介動画を手元で作る（リハーサル用）
-argument-hint: <課題キー 例:DEMO-1> [ステップ名...]
+argument-hint: <課題キー 例:AISTUDYDEMO-1> [ステップ名...]
 ---
 
 `npm run pipeline -- $ARGUMENTS` を実行してください。

@@ -3,7 +3,7 @@ import type { ReleaseVideoProps } from "./types";
 // Remotion Studio で確認するための見本。本番はパイプラインが out/props.json を作る
 export const sampleProps: ReleaseVideoProps = {
   script: {
-    issueKey: "DEMO-1",
+    issueKey: "AISTUDYDEMO-1",
     title: "問い合わせフォームに入力チェックを追加しました",
     audience: "利用部門",
     scenes: [
@@ -30,7 +30,7 @@ export const sampleProps: ReleaseVideoProps = {
           { case: "正しい入力で送信", pass: true },
         ],
       },
-      { id: "closing", heading: "詳しくはBacklogへ", narration: "詳しくはBacklogの課題、デモ イチをご覧ください。" },
+      { id: "closing", heading: "詳しくはBacklogへ", narration: "詳しくはBacklogの課題、エーアイ スタディ デモ イチをご覧ください。" },
     ],
   },
   assets: { scenes: {} },

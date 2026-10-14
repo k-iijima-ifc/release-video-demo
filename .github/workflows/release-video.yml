@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       issue_key:
-        description: 課題キー（例：DEMO-1）
+        description: 課題キー（例：AISTUDYDEMO-1）
         required: true
       steps:
         description: 実行するステップ（空欄ならすべて。例：script voice render）

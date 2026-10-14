@@ -1,4 +1,4 @@
-// 使い方: npm run pipeline -- DEMO-1 [ステップ名...]
+// 使い方: npm run pipeline -- AISTUDYDEMO-1 [ステップ名...]
 // ステップ名を省略するとすべて実行する。ローカルのリハーサルと Actions で同じものを使う
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -26,7 +26,7 @@ const steps: Record<string, (ctx: PipelineContext) => Promise<void>> = {
 
 const [issueKey, ...only] = process.argv.slice(2);
 if (!issueKey || !/^[A-Z][A-Z0-9_]*-\d+$/.test(issueKey)) {
-  console.error("課題キーを指定してください（例: npm run pipeline -- DEMO-1）");
+  console.error("課題キーを指定してください（例: npm run pipeline -- AISTUDYDEMO-1）");
   process.exit(1);
 }
 

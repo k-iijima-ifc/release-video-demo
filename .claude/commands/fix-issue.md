@@ -1,6 +1,6 @@
 ---
 description: Backlogの課題を読んで実装し、PRを作る
-argument-hint: <課題キー 例:DEMO-1>
+argument-hint: <課題キー 例:AISTUDYDEMO-1>
 ---
 
 Backlogの課題 $ARGUMENTS を対応してください。

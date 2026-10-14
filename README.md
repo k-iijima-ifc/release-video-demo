@@ -27,10 +27,10 @@ GitHub 側は Settings → Secrets and variables → Actions に、`.env.example
 | `npm run dev` | 問い合わせフォームを起動（http://localhost:5173） |
 | `npm test` | Playwright のテスト |
 | `npm run video:studio` | Remotion Studio で動画テンプレートを確認 |
-| `npm run pipeline -- DEMO-1` | 動画生成パイプラインを手元で実行 |
-| `npm run pipeline -- DEMO-1 script voice` | 一部のステップだけ実行 |
+| `npm run pipeline -- AISTUDYDEMO-1` | 動画生成パイプラインを手元で実行 |
+| `npm run pipeline -- AISTUDYDEMO-1 script voice` | 一部のステップだけ実行 |
 
-Claude Code では `/fix-issue DEMO-1`（課題を実装してPR作成）と `/release-video DEMO-1`（手元で動画生成）が使える。
+Claude Code では `/fix-issue AISTUDYDEMO-1`（課題を実装してPR作成）と `/release-video AISTUDYDEMO-1`（手元で動画生成）が使える。
 
 ## ワークフロー
 
