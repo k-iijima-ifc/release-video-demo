@@ -39,6 +39,7 @@ Claude Code では `/fix-issue AISTUDYDEMO-1`（課題を実装してPR作成）
 | ci | PR、main への push | 型チェックとテスト |
 | check-env | 手動 | Secrets / Variables の疎通確認 |
 | create-demo-issue | 手動 | デモ用の改善要望をBacklogに起票（リハーサルのたびに使える） |
+| fix-issue | 手動（課題キーを指定） | Claude Code が課題を読んで実装し、PRを作る（/fix-issue のクラウド版） |
 | release-video | `feature/<課題キー>` のPRのマージ、または手動 | 動画生成。自動実行は Variables の `RELEASE_VIDEO_ENABLED=true` のときだけ |
 
 ## ライセンス上の注意

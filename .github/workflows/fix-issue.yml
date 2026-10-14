@@ -1,0 +1,68 @@
+name: fix-issue
+
+# Backlogの課題を Claude Code が読んで実装し、PRを作る（/fix-issue をクラウドで実行する）
+on:
+  workflow_dispatch:
+    inputs:
+      issue_key:
+        description: 課題キー（例：AISTUDYDEMO-1）
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: fix-issue-${{ inputs.issue_key }}
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      BACKLOG_API_KEY: ${{ secrets.BACKLOG_API_KEY }}
+      BACKLOG_DOMAIN: ${{ vars.BACKLOG_DOMAIN }}
+      BACKLOG_PROJECT_KEY: ${{ vars.BACKLOG_PROJECT_KEY }}
+      GH_TOKEN: ${{ github.token }}
+      ISSUE_KEY: ${{ inputs.issue_key }}
+    steps:
+      - name: 課題キーを確認
+        run: |
+          if ! [[ "$ISSUE_KEY" =~ ^[A-Z][A-Z0-9_]*-[0-9]+$ ]]; then
+            echo "課題キーの形式が正しくありません: $ISSUE_KEY" >&2
+            exit 1
+          fi
+
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm install -g @anthropic-ai/claude-code
+      - name: git の設定
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Claude Code で課題を対応
+        run: |
+          mkdir -p out
+          claude -p "/fix-issue $ISSUE_KEY" \
+            --permission-mode acceptEdits \
+            --max-turns 80 \
+            --output-format stream-json --verbose > out/claude-log.jsonl
+          jq -r 'select(.type == "result") | .result' out/claude-log.jsonl >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: fix-issue-${{ inputs.issue_key }}
+          path: |
+            out/claude-log.jsonl
+            out/test-results.json
+          if-no-files-found: ignore
