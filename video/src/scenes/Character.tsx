@@ -5,7 +5,10 @@ type AnimationName = keyof CharacterSprites["animations"];
 
 /** オープニングで画面の外から歩いてくる時間（秒） */
 const WALK_IN_SECONDS = 1.5;
-const SIZE = 260;
+/** 表示サイズ。ドット絵がにじまないよう、元のコマ（160px）のちょうど2倍にする */
+const SIZE = 320;
+/** 字幕の右側にキャラを置くため、字幕の右に空ける幅（SceneView が使う） */
+export const CHARACTER_SPACE = SIZE + 40;
 
 /** シーンごとの動き。テストに不合格があれば喜ばずに説明を続ける */
 function animationFor(scene: Scene, walking: boolean): AnimationName {
@@ -43,8 +46,8 @@ export const Character = ({ sprites, scene }: { sprites: CharacterSprites; scene
       src={staticFile(frames[index])}
       style={{
         position: "absolute",
-        right: 72,
-        bottom: 190,
+        right: 40,
+        bottom: 24,
         width: SIZE,
         height: SIZE,
         objectFit: "contain",

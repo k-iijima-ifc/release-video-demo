@@ -1,5 +1,6 @@
 import { AbsoluteFill, Img, OffthreadVideo, interpolate, staticFile, useCurrentFrame } from "remotion";
 import type { ReleaseVideoProps, Scene } from "../types";
+import { CHARACTER_SPACE } from "./Character";
 
 // フェーズ3で各シーンを作り込む。いまは素材の有無に応じて最低限の表示を行う
 export const SceneView = ({ scene, props }: { scene: Scene; props: ReleaseVideoProps }) => {
@@ -63,7 +64,7 @@ export const SceneView = ({ scene, props }: { scene: Scene; props: ReleaseVideoP
         </div>
       </div>
 
-      <div style={{ fontSize: 40, lineHeight: 1.5, background: "rgb(0 0 0 / 0.45)", padding: "16px 24px", borderRadius: 12 }}>
+      <div style={{ fontSize: 40, lineHeight: 1.5, marginRight: props.assets.character ? CHARACTER_SPACE - 96 : 0, background: "rgb(0 0 0 / 0.45)", padding: "16px 24px", borderRadius: 12 }}>
         {scene.narration}
       </div>
     </AbsoluteFill>

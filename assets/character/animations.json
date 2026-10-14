@@ -1,0 +1,61 @@
+{
+  "characterId": "970a2476-cf0b-4b90-8194-c57ff2d44ab8",
+  "fps": 8,
+  "animations": {
+    "walk": [
+      "character/walk/frame_000.png",
+      "character/walk/frame_001.png",
+      "character/walk/frame_002.png",
+      "character/walk/frame_003.png",
+      "character/walk/frame_004.png",
+      "character/walk/frame_005.png",
+      "character/walk/frame_006.png",
+      "character/walk/frame_007.png",
+      "character/walk/frame_008.png"
+    ],
+    "wave": [
+      "character/wave/frame_000.png",
+      "character/wave/frame_001.png",
+      "character/wave/frame_002.png",
+      "character/wave/frame_003.png",
+      "character/wave/frame_004.png",
+      "character/wave/frame_005.png",
+      "character/wave/frame_006.png",
+      "character/wave/frame_007.png",
+      "character/wave/frame_008.png"
+    ],
+    "talk": [
+      "character/talk/frame_000.png",
+      "character/talk/frame_001.png",
+      "character/talk/frame_002.png",
+      "character/talk/frame_003.png",
+      "character/talk/frame_004.png",
+      "character/talk/frame_005.png",
+      "character/talk/frame_006.png",
+      "character/talk/frame_007.png",
+      "character/talk/frame_008.png"
+    ],
+    "point": [
+      "character/point/frame_000.png",
+      "character/point/frame_001.png",
+      "character/point/frame_002.png",
+      "character/point/frame_003.png",
+      "character/point/frame_004.png",
+      "character/point/frame_005.png",
+      "character/point/frame_006.png",
+      "character/point/frame_007.png",
+      "character/point/frame_008.png"
+    ],
+    "celebrate": [
+      "character/celebrate/frame_000.png",
+      "character/celebrate/frame_001.png",
+      "character/celebrate/frame_002.png",
+      "character/celebrate/frame_003.png",
+      "character/celebrate/frame_004.png",
+      "character/celebrate/frame_005.png",
+      "character/celebrate/frame_006.png",
+      "character/celebrate/frame_007.png",
+      "character/celebrate/frame_008.png"
+    ]
+  }
+}
