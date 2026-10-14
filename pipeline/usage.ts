@@ -12,8 +12,12 @@ const day = (unix: number) => new Date(unix * 1000).toISOString().slice(0, 16).r
 
 async function elevenLabs() {
   const headers = { "xi-api-key": env("ELEVENLABS_API_KEY") };
-  const sub = await getJson("https://api.elevenlabs.io/v1/user/subscription", headers);
-  console.log(`ElevenLabs: プラン ${sub.tier}、今月の使用 ${sub.character_count} / ${sub.character_limit} クレジット（リセット ${day(sub.next_character_count_reset_unix)}）`);
+  try {
+    const sub = await getJson("https://api.elevenlabs.io/v1/user/subscription", headers);
+    console.log(`ElevenLabs: プラン ${sub.tier}、今月の使用 ${sub.character_count} / ${sub.character_limit} クレジット（リセット ${day(sub.next_character_count_reset_unix)}）`);
+  } catch (e) {
+    console.log(`ElevenLabs: 契約情報は取得できません（APIキーに user_read の権限がない）${e instanceof Error ? "" : e}`);
+  }
   const history = await getJson("https://api.elevenlabs.io/v1/history?page_size=100", headers);
   for (const h of history.history ?? []) {
     const cost = (h.character_count_change_to ?? 0) - (h.character_count_change_from ?? 0);
