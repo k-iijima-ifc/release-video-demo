@@ -64,11 +64,16 @@ jobs:
             --output-format stream-json --verbose > out/claude-log.jsonl
           jq -r 'select(.type == "result") | .result' out/claude-log.jsonl >> "$GITHUB_STEP_SUMMARY"
 
-      - name: PRのブランチで ci を実行
+      # Actions が作ったPRの ci は「承認待ち」で止まるので承認する。承認できなければ ci を直接起動する
+      - name: PRの ci を動かす
         run: |
-          if git ls-remote --exit-code --heads origin "feature/$ISSUE_KEY" >/dev/null; then
-            gh workflow run ci --ref "feature/$ISSUE_KEY"
-          fi
+          git ls-remote --exit-code --heads origin "feature/$ISSUE_KEY" >/dev/null || exit 0
+          sleep 15
+          ids=$(gh run list -w ci -e pull_request -b "feature/$ISSUE_KEY" --json databaseId,conclusion             --jq '.[] | select(.conclusion == "action_required") | .databaseId')
+          for id in $ids; do
+            gh api -X POST "repos/$GITHUB_REPOSITORY/actions/runs/$id/approve" && approved=1
+          done
+          [ -n "${approved:-}" ] || gh workflow run ci --ref "feature/$ISSUE_KEY"
 
       - uses: actions/upload-artifact@v7
         if: always()

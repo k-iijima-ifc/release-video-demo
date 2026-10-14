@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches: [main]
-  # fix-issue が作ったPRは GITHUB_TOKEN 製のため pull_request で起動しない。fix-issue から手動起動する
+  # fix-issue が作ったPRの ci は承認待ちになる。fix-issue が承認し、できなければここから手動起動する
   workflow_dispatch:
 
 permissions:
