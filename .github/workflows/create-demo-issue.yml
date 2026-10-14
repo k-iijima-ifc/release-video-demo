@@ -1,0 +1,25 @@
+name: create-demo-issue
+
+# デモ用の改善要望をBacklogに起票する（リハーサルのたびに新しい課題を作るときにも使う）
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx tsx pipeline/create-demo-issue.ts
+        env:
+          BACKLOG_API_KEY: ${{ secrets.BACKLOG_API_KEY }}
+          BACKLOG_DOMAIN: ${{ vars.BACKLOG_DOMAIN }}
+          BACKLOG_PROJECT_KEY: ${{ vars.BACKLOG_PROJECT_KEY }}
