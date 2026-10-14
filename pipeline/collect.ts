@@ -64,6 +64,7 @@ export async function collect(ctx: PipelineContext): Promise<void> {
     issue: await fetchIssue(ctx.issueKey),
     pr: { number: pr.number, title: pr.title, body: pr.body, url: pr.url, mergeCommit, baseCommit },
     diff,
+    appSource: readFileSync("app/src/App.tsx", "utf8"),
     tests,
   };
   writeJson(paths(ctx).sources, sources);

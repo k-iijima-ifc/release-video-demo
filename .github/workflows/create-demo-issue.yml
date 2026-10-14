@@ -3,6 +3,16 @@ name: create-demo-issue
 # デモ用の改善要望をBacklogに起票する（リハーサルのたびに新しい課題を作るときにも使う）
 on:
   workflow_dispatch:
+    inputs:
+      pattern:
+        description: 改善要望のパターン
+        type: choice
+        default: input-check
+        options:
+          - input-check
+          - confirm
+          - counter
+          - receipt
 
 permissions:
   contents: read
@@ -18,8 +28,9 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx tsx pipeline/create-demo-issue.ts
+      - run: npm run demo:issue -- "$PATTERN"
         env:
+          PATTERN: ${{ inputs.pattern }}
           BACKLOG_API_KEY: ${{ secrets.BACKLOG_API_KEY }}
           BACKLOG_DOMAIN: ${{ vars.BACKLOG_DOMAIN }}
           BACKLOG_PROJECT_KEY: ${{ vars.BACKLOG_PROJECT_KEY }}

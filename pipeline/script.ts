@@ -1,7 +1,7 @@
 // Claude Code（claude -p）で sources.json から out/<課題キー>/script.json を作る
 import { run } from "./lib/exec";
 import { paths, readJson, writeJson, type PipelineContext, type Sources } from "./lib/context";
-import type { ReleaseScript, Scene, SceneId } from "../video/src/types";
+import type { CaptureStep, ReleaseScript, Scene, SceneId } from "../video/src/types";
 
 const SCENE_IDS: SceneId[] = ["opening", "summary", "before_after", "tests", "closing"];
 
@@ -31,6 +31,17 @@ function buildPrompt(sources: Sources): string {
 }
 results には下のテスト結果をすべて、番号どおりに含めること（合否はこちらで実際の結果を入れる）。
 
+さらに、トップレベルに "capture" を加えること。これは「変更前と変更後」のシーンで使う画面写真を撮るための操作手順で、
+変更前と変更後の画面に同じ操作をして撮り比べる。違いが一番よくわかる状態で終わるようにすること。
+使える操作は次の5つだけ（label は画面の項目名、text はボタンの文字）：
+- { "action": "fill", "label": "お名前", "value": "山田 太郎" }（"repeat": 回数 を付けると value を繰り返して入力する）
+- { "action": "select", "label": "お問い合わせ種別", "value": "product" }
+- { "action": "click", "text": "送信する" }
+- { "action": "press", "key": "Tab" }
+- { "action": "wait", "ms": 1000 }
+変更前の画面にないボタンなどへの操作はスキップされる。最後は "wait" で表示が落ち着くのを待つこと。
+変更後の画面のソースとテストのコードを参考に、実在する項目名とボタンの文字を使うこと。
+
 # 課題（${sources.issueKey}）
 件名：${sources.issue.summary}
 ${sources.issue.description}
@@ -40,6 +51,9 @@ ${sources.pr.body}
 
 # テスト結果（全${sources.tests.length}件、合格${sources.tests.filter((t) => t.ok).length}件）
 ${tests}
+
+# 変更後の画面のソース（app/src/App.tsx）
+${sources.appSource}
 
 # 差分
 ${sources.diff}
@@ -55,8 +69,29 @@ function extractJson(text: string): unknown {
 
 type DraftScene = Omit<Scene, "results"> & { results?: { index: number; case: string }[] };
 
+/** 撮影手順のうち、形が正しいものだけを残す */
+function validCapture(steps: unknown): CaptureStep[] {
+  if (!Array.isArray(steps)) return [];
+  return steps.filter((s): s is CaptureStep => {
+    switch (s?.action) {
+      case "fill":
+        return typeof s.label === "string" && typeof s.value === "string";
+      case "select":
+        return typeof s.label === "string" && typeof s.value === "string";
+      case "click":
+        return typeof s.text === "string";
+      case "press":
+        return typeof s.key === "string";
+      case "wait":
+        return typeof s.ms === "number" && s.ms <= 5000;
+      default:
+        return false;
+    }
+  });
+}
+
 /** Claude の出力を検証し、テストの合否は実際の結果で上書きする */
-function finalize(draft: { title: string; scenes: DraftScene[] }, sources: Sources): ReleaseScript {
+function finalize(draft: { title: string; scenes: DraftScene[]; capture?: unknown }, sources: Sources): ReleaseScript {
   const scenes = SCENE_IDS.map((id) => {
     const scene = draft.scenes.find((s) => s.id === id);
     if (!scene?.narration) throw new Error(`台本にシーン ${id} のナレーションがありません`);
@@ -72,6 +107,7 @@ function finalize(draft: { title: string; scenes: DraftScene[] }, sources: Sourc
     title: draft.title,
     audience: "利用部門",
     scenes: scenes.map((s) => (s.id === "tests" ? { ...s, results } : (s as Scene))),
+    capture: validCapture(draft.capture),
   };
 }
 
@@ -81,7 +117,7 @@ export async function generateScript(ctx: PipelineContext): Promise<void> {
   const result = JSON.parse(output) as { result?: string; is_error?: boolean; total_cost_usd?: number };
   if (result.is_error || !result.result) throw new Error(`Claude Code が台本を返しませんでした: ${output.slice(0, 500)}`);
 
-  const script = finalize(extractJson(result.result) as { title: string; scenes: DraftScene[] }, sources);
+  const script = finalize(extractJson(result.result) as Parameters<typeof finalize>[0], sources);
   writeJson(paths(ctx).script, script);
   const chars = script.scenes.reduce((n, s) => n + s.narration.length, 0);
   console.log(`  「${script.title}」ナレーション ${chars} 文字（費用 $${result.total_cost_usd?.toFixed(3) ?? "?"}）`);

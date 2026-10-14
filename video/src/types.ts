@@ -18,12 +18,24 @@ export type Scene = {
   results?: TestResult[];
 };
 
+/**
+ * 変更前と変更後の画面を撮るための操作（台本と一緒に Claude が考える。動画には出ない）。
+ * 変更前の画面にない要素への操作は、撮影時にスキップされる
+ */
+export type CaptureStep =
+  | { action: "fill"; label: string; value: string; repeat?: number }
+  | { action: "select"; label: string; value: string }
+  | { action: "click"; text: string }
+  | { action: "press"; key: string }
+  | { action: "wait"; ms: number };
+
 export type ReleaseScript = {
   issueKey: string;
   issueUrl?: string;
   title: string;
   audience: string;
   scenes: Scene[];
+  capture?: CaptureStep[];
 };
 
 /** 字幕の1文と、ナレーションの頭からの表示開始時刻（秒） */
