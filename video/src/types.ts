@@ -30,6 +30,8 @@ export type SceneAssets = {
   narration?: string;
   /** ナレーションの長さ（秒）。尺の計算に使う */
   narrationSeconds?: number;
+  /** ナレーションの音量の倍率。生成された音声の大きさがまちまちなのでパイプラインがそろえる */
+  narrationVolume?: number;
   icon?: string;
   beforeImage?: string;
   afterImage?: string;

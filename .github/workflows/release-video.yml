@@ -89,5 +89,7 @@ jobs:
         if: always()
         with:
           name: release-video-${{ steps.issue.outputs.key }}
-          path: out/${{ steps.issue.outputs.key }}/
+          path: |
+            out/${{ steps.issue.outputs.key }}/
+            assets/generated/${{ steps.issue.outputs.key }}/
           if-no-files-found: ignore

@@ -27,7 +27,7 @@ export const ReleaseVideo = (props: ReleaseVideoProps) => (
     {props.assets.bgm && <Audio src={staticFile(props.assets.bgm)} volume={0.15} />}
     <Series>
       {props.script.scenes.map((scene) => {
-        const narration = props.assets.scenes[scene.id]?.narration;
+        const { narration, narrationVolume = 1 } = props.assets.scenes[scene.id] ?? {};
         const sfx = scene.id === "opening" ? props.assets.sfx?.opening : scene.id === "tests" ? props.assets.sfx?.success : undefined;
         return (
           <Series.Sequence key={scene.id} durationInFrames={sceneDurationInFrames(scene, props)}>
@@ -35,7 +35,7 @@ export const ReleaseVideo = (props: ReleaseVideoProps) => (
             {sfx && <Audio src={staticFile(sfx)} volume={0.5} />}
             {narration && (
               <Sequence from={scene.id === "opening" ? OPENING_NARRATION_DELAY : 0}>
-                <Audio src={staticFile(narration)} />
+                <Audio src={staticFile(narration)} volume={narrationVolume} />
               </Sequence>
             )}
           </Series.Sequence>
