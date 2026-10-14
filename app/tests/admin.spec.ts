@@ -15,6 +15,7 @@ test("フォームから送信した問い合わせが、一覧の先頭に未�
   await page.getByLabel("メールアドレス").fill("taro@example.com");
   await page.getByLabel("お問い合わせ種別").selectOption("product");
   await page.getByLabel("お問い合わせ内容").fill("製品の資料をください。");
+  await page.getByRole("button", { name: "入力内容を確認する" }).click();
   await page.getByRole("button", { name: "送信する" }).click();
   await expect(page.getByTestId("done-message")).toBeVisible();
 

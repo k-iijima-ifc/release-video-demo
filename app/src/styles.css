@@ -59,6 +59,20 @@ button:disabled {
   opacity: 0.6;
 }
 
+button.secondary {
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+/* 確認画面 */
+.button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 24px;
+}
+
 .notice {
   padding: 12px 16px;
   border-radius: 8px;
