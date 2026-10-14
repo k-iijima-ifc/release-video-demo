@@ -1,0 +1,44 @@
+{
+  "name": "release-video-demo",
+  "private": true,
+  "type": "module",
+  "description": "Backlogの課題が完了したら、リリース紹介動画が自動でできるデモ",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build:app": "vite build",
+    "preview:app": "vite preview",
+    "test": "playwright test",
+    "check:env": "tsx pipeline/check-env.ts",
+    "pipeline": "tsx pipeline/run.ts",
+    "video:studio": "remotion studio video/src/index.ts",
+    "video:render": "remotion render video/src/index.ts ReleaseVideo out/release.mp4 --props=out/props.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/google-fonts": "4.0.535",
+    "@remotion/media-utils": "4.0.535",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "4.0.535"
+  },
+  "devDependencies": {
+    "@elevenlabs/elevenlabs-js": "^2.72.0",
+    "@playwright/test": "^1.64.0",
+    "@remotion/cli": "4.0.535",
+    "@runwayml/sdk": "^4.22.0",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "backlog-mcp-server": "^0.22.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true
+  }
+}

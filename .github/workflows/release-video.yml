@@ -1,0 +1,91 @@
+name: release-video
+
+# feature/<課題キー> のPRがマージされたら、リリース紹介動画を作ってBacklogに届ける。
+# パイプラインが完成するまでは Variables の RELEASE_VIDEO_ENABLED を true にしない（自動実行が止まる）。
+# 手動実行（workflow_dispatch）はいつでもできる。
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      issue_key:
+        description: 課題キー（例：DEMO-1）
+        required: true
+      steps:
+        description: 実行するステップ（空欄ならすべて。例：script voice render）
+        required: false
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: release-video-${{ github.event.pull_request.number || inputs.issue_key }}
+  cancel-in-progress: false
+
+jobs:
+  release-video:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+       startsWith(github.event.pull_request.head.ref, 'feature/') &&
+       vars.RELEASE_VIDEO_ENABLED == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      BACKLOG_API_KEY: ${{ secrets.BACKLOG_API_KEY }}
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      PIXELLAB_API_KEY: ${{ secrets.PIXELLAB_API_KEY }}
+      RUNWAYML_API_SECRET: ${{ secrets.RUNWAYML_API_SECRET }}
+      BACKLOG_DOMAIN: ${{ vars.BACKLOG_DOMAIN }}
+      BACKLOG_PROJECT_KEY: ${{ vars.BACKLOG_PROJECT_KEY }}
+      BACKLOG_DONE_STATUS_ID: ${{ vars.BACKLOG_DONE_STATUS_ID }}
+      ELEVENLABS_VOICE_ID: ${{ vars.ELEVENLABS_VOICE_ID }}
+      ELEVENLABS_MODEL_ID: ${{ vars.ELEVENLABS_MODEL_ID }}
+      GH_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: 課題キーを決める
+        id: issue
+        env:
+          INPUT_KEY: ${{ inputs.issue_key }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          key="${INPUT_KEY:-${HEAD_REF#feature/}}"
+          if ! [[ "$key" =~ ^[A-Z][A-Z0-9_]*-[0-9]+$ ]]; then
+            echo "課題キーを取り出せません: $key" >&2
+            exit 1
+          fi
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Playwright と日本語フォント
+        run: |
+          npx playwright install --with-deps chromium
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+      - name: Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: パイプライン実行
+        env:
+          ISSUE_KEY: ${{ steps.issue.outputs.key }}
+          STEPS: ${{ inputs.steps }}
+        run: npm run pipeline -- "$ISSUE_KEY" $STEPS
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: release-video-${{ steps.issue.outputs.key }}
+          path: out/${{ steps.issue.outputs.key }}/
+          if-no-files-found: ignore
