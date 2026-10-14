@@ -1,5 +1,5 @@
 // デモ用の改善要望をBacklogに起票する。リハーサルのたびに新しい課題を作るときにも使う
-// 使い方: npm run demo:issue -- [パターン]（input-check / confirm / counter / receipt。省略時は input-check）
+// 使い方: npm run demo:issue -- [パターン]（pipeline/demo-issues.ts のキー。省略時は input-check）
 import { env } from "./lib/env";
 import { DEMO_ISSUES, type DemoPattern } from "./demo-issues";
 

@@ -1,11 +1,20 @@
 // PR差分・PR本文・Backlog課題・テスト結果を集めて out/<課題キー>/sources.json に保存する
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { env } from "./lib/env";
 import { run } from "./lib/exec";
 import { paths, writeJson, type PipelineContext, type Sources, type TestCaseResult } from "./lib/context";
 
 /** 台本の材料として渡す差分の上限（文字数） */
 const MAX_DIFF_CHARS = 40_000;
+
+/** 変更後の画面のソース（app/src/ 以下の .ts / .tsx）。撮影手順を考える材料にする */
+function readAppSource(): string {
+  const files = readdirSync("app/src", { recursive: true, encoding: "utf8" })
+    .filter((f) => /\.tsx?$/.test(f) && !f.endsWith("seed.ts"))
+    .sort();
+  return files.map((f) => `--- app/src/${f.replaceAll("\\", "/")}\n${readFileSync(join("app/src", f), "utf8")}`).join("\n");
+}
 
 function findPullRequest(issueKey: string): number {
   if (process.env.PR_NUMBER) return Number(process.env.PR_NUMBER);
@@ -64,7 +73,7 @@ export async function collect(ctx: PipelineContext): Promise<void> {
     issue: await fetchIssue(ctx.issueKey),
     pr: { number: pr.number, title: pr.title, body: pr.body, url: pr.url, mergeCommit, baseCommit },
     diff,
-    appSource: readFileSync("app/src/App.tsx", "utf8"),
+    appSource: readAppSource(),
     tests,
   };
   writeJson(paths(ctx).sources, sources);

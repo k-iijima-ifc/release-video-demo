@@ -13,6 +13,8 @@ on:
           - confirm
           - counter
           - receipt
+          - admin-search
+          - admin-status
 
 permissions:
   contents: read
