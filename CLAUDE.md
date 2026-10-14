@@ -4,7 +4,10 @@ Backlogの課題が完了したら、リリース紹介動画が自動ででき�
 
 ## 構成
 
-- `app/`：デモ対象の問い合わせフォーム（Vite + React）。テストは `app/tests/`（Playwright）
+- `app/`：デモ対象のアプリ（Vite + React）。画面は `app/src/pages/`、テストは `app/tests/`（Playwright）
+  - お問い合わせフォーム（`#/`）：お客様が問い合わせを送る
+  - 問い合わせ一覧（`#/admin`）と詳細（`#/admin/inquiries/:id`）：社内の担当者が対応状況・担当者・メモを管理する
+  - データは疑似サーバー（`app/src/api.ts`）が localStorage に保存する。最初はサンプル（`app/src/seed.ts`）が入っている
 - `video/`：Remotion の動画テンプレート。`video/src/types.ts` が台本（script.json）の型
 - `pipeline/`：動画生成のスクリプト。`npm run pipeline -- <課題キー> [ステップ名...]`
 - `assets/`：Remotion の public ディレクトリ。事前に作った素材と `generated/<課題キー>/`

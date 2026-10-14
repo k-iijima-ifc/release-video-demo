@@ -33,7 +33,9 @@ results には下のテスト結果をすべて、番号どおりに含めるこ
 
 さらに、トップレベルに "capture" を加えること。これは「変更前と変更後」のシーンで使う画面写真を撮るための操作手順で、
 変更前と変更後の画面に同じ操作をして撮り比べる。違いが一番よくわかる状態で終わるようにすること。
-使える操作は次の5つだけ（label は画面の項目名、text はボタンの文字）：
+撮影はお問い合わせフォーム（#/）から始まる。撮るのは最後に表示している画面の本文部分。
+使える操作は次の6つだけ（label は画面の項目名、text はボタンやリンクの文字）：
+- { "action": "goto", "path": "#/admin" }（画面を移動する。#/ お問い合わせ、#/admin 問い合わせ一覧、#/admin/inquiries/1003 詳細）
 - { "action": "fill", "label": "お名前", "value": "山田 太郎" }（"repeat": 回数 を付けると value を繰り返して入力する）
 - { "action": "select", "label": "お問い合わせ種別", "value": "product" }
 - { "action": "click", "text": "送信する" }
@@ -52,7 +54,7 @@ ${sources.pr.body}
 # テスト結果（全${sources.tests.length}件、合格${sources.tests.filter((t) => t.ok).length}件）
 ${tests}
 
-# 変更後の画面のソース（app/src/App.tsx）
+# 変更後の画面のソース（app/src/ 以下）
 ${sources.appSource}
 
 # 差分
@@ -74,6 +76,8 @@ function validCapture(steps: unknown): CaptureStep[] {
   if (!Array.isArray(steps)) return [];
   return steps.filter((s): s is CaptureStep => {
     switch (s?.action) {
+      case "goto":
+        return typeof s.path === "string" && s.path.startsWith("#/");
       case "fill":
         return typeof s.label === "string" && typeof s.value === "string";
       case "select":

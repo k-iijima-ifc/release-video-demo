@@ -23,6 +23,7 @@ export type Scene = {
  * 変更前の画面にない要素への操作は、撮影時にスキップされる
  */
 export type CaptureStep =
+  | { action: "goto"; path: string }
   | { action: "fill"; label: string; value: string; repeat?: number }
   | { action: "select"; label: string; value: string }
   | { action: "click"; text: string }

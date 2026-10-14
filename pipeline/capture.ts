@@ -14,11 +14,15 @@ const DEFAULT_STEPS: CaptureStep[] = [
   { action: "wait", ms: 1000 },
 ];
 
+const BASE_URL = "http://localhost:4173";
 /** 変更前の画面にない要素を待ち続けないよう、1操作の待ち時間を短くする */
 const STEP_TIMEOUT = 2000;
 
 async function runStep(page: Page, step: CaptureStep): Promise<void> {
   switch (step.action) {
+    case "goto":
+      await page.goto(`${BASE_URL}${step.path.startsWith("#") ? `/${step.path}` : step.path}`);
+      return;
     case "fill":
       return page.getByLabel(step.label).fill(step.value.repeat(step.repeat ?? 1), { timeout: STEP_TIMEOUT });
     case "select": {
@@ -27,8 +31,15 @@ async function runStep(page: Page, step: CaptureStep): Promise<void> {
       await select.selectOption(step.value, { timeout: STEP_TIMEOUT }).catch(() => select.selectOption({ label: step.value }, { timeout: STEP_TIMEOUT }));
       return;
     }
-    case "click":
-      return page.getByRole("button", { name: step.text }).first().click({ timeout: STEP_TIMEOUT });
+    case "click": {
+      // ボタン → リンク → 文字の順に探す
+      const target = page
+        .getByRole("button", { name: step.text })
+        .or(page.getByRole("link", { name: step.text }))
+        .or(page.getByText(step.text, { exact: true }))
+        .first();
+      return target.click({ timeout: STEP_TIMEOUT });
+    }
     case "press":
       return page.keyboard.press(step.key);
     case "wait":
@@ -52,7 +63,7 @@ async function captureApp(steps: CaptureStep[], label: string): Promise<Buffer> 
   const browser = await chromium.launch();
   try {
     const page = await browser.newPage({ viewport: { width: 1280, height: 1000 }, deviceScaleFactor: 2, locale: "ja-JP" });
-    await page.goto("http://localhost:4173/");
+    await page.goto(`${BASE_URL}/`);
     await scenario(page, steps, label);
     return await page.locator("main").screenshot();
   } finally {
