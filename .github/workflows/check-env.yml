@@ -1,6 +1,6 @@
 name: check-env
 
-# Secrets / Variables を登録したら手動で実行し、各APIに疎通できるか確かめる
+# Secrets / Variables を登録したら手動で実行し、各APIに疎通できるか確かめる。残高と最近の使用量も表示する
 on:
   workflow_dispatch:
 
@@ -31,3 +31,10 @@ jobs:
           BACKLOG_DONE_STATUS_ID: ${{ vars.BACKLOG_DONE_STATUS_ID }}
           ELEVENLABS_VOICE_ID: ${{ vars.ELEVENLABS_VOICE_ID }}
           ELEVENLABS_MODEL_ID: ${{ vars.ELEVENLABS_MODEL_ID }}
+      - name: 残高と最近の使用量
+        if: always()
+        run: npm run usage
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          PIXELLAB_API_KEY: ${{ secrets.PIXELLAB_API_KEY }}
+          RUNWAYML_API_SECRET: ${{ secrets.RUNWAYML_API_SECRET }}
