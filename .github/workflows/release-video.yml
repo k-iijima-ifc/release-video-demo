@@ -50,6 +50,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          # マージ後のコードを動画にする（手動実行時は main の最新）
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.sha }}
           fetch-depth: 0
 
       - name: 課題キーを決める

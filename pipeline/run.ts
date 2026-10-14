@@ -30,10 +30,12 @@ if (!issueKey || !/^[A-Z][A-Z0-9_]*-\d+$/.test(issueKey)) {
   process.exit(1);
 }
 
+const publicDir = "assets";
 const ctx: PipelineContext = {
   issueKey,
   outDir: join("out", issueKey),
-  assetsDir: join("assets", "generated", issueKey),
+  publicDir,
+  assetsDir: join(publicDir, "generated", issueKey),
 };
 mkdirSync(ctx.outDir, { recursive: true });
 mkdirSync(ctx.assetsDir, { recursive: true });

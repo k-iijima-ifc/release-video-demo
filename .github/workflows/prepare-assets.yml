@@ -1,0 +1,39 @@
+name: prepare-assets
+
+# 全動画で共通の素材（案内役キャラの候補、オープニング映像、効果音）を作る。
+# できた素材は成果物としてダウンロードし、見た目を確かめてから assets/ にコミットする
+on:
+  workflow_dispatch:
+    inputs:
+      tasks:
+        description: 作る素材（空欄ならすべて。例：character opening sfx）
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run prepare-assets -- $TASKS
+        env:
+          TASKS: ${{ inputs.tasks }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVENLABS_VOICE_ID: ${{ vars.ELEVENLABS_VOICE_ID }}
+          ELEVENLABS_MODEL_ID: ${{ vars.ELEVENLABS_MODEL_ID }}
+          PIXELLAB_API_KEY: ${{ secrets.PIXELLAB_API_KEY }}
+          RUNWAYML_API_SECRET: ${{ secrets.RUNWAYML_API_SECRET }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: prepared-assets
+          path: |
+            assets/
+            !assets/.gitkeep

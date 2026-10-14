@@ -41,6 +41,8 @@ export type ReleaseVideoProps = {
     openingVideo?: string;
     character?: string;
     bgm?: string;
+    /** 全動画で共通の効果音 */
+    sfx?: { opening?: string; success?: string };
     scenes: Partial<Record<SceneId, SceneAssets>>;
   };
 };

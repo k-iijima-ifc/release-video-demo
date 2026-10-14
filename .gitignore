@@ -11,6 +11,10 @@ playwright-report/
 blob-report/
 playwright/.cache/
 
+# パイプラインが課題ごとに作る素材と、prepare-assets の候補
+assets/generated/
+assets/candidates/
+
 # Remotion
 .remotion/
 
