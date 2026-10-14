@@ -5,8 +5,9 @@
       "args": [
         "--env-file-if-exists=.env",
         "node_modules/backlog-mcp-server/build/index.js",
-        "--enable-toolsets",
-        "space,project,issue"
+        "--enable-toolsets", "space",
+        "--enable-toolsets", "project",
+        "--enable-toolsets", "issue"
       ]
     }
   }

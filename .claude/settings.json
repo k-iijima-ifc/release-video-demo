@@ -9,28 +9,31 @@
       "mcp__backlog__get_project",
       "Bash(npm run typecheck)",
       "Bash(npm test)",
-      "Bash(npm run test:*)",
-      "Bash(npx playwright test:*)",
+      "Bash(npm test *)",
+      "Bash(npx playwright test *)",
       "Bash(npm run build:app)",
       "Bash(npm run check:env)",
-      "Bash(npm run pipeline:*)",
-      "Bash(git status:*)",
-      "Bash(git diff:*)",
-      "Bash(git log:*)",
-      "Bash(git switch -c feature/:*)",
-      "Bash(git checkout -b feature/:*)",
-      "Bash(git branch:*)",
-      "Bash(ls:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git push -u origin feature/:*)",
-      "Bash(gh pr create:*)",
-      "Bash(gh pr view:*)"
+      "Bash(npm run pipeline *)",
+      "Bash(ls *)",
+      "Bash(git status)",
+      "Bash(git status *)",
+      "Bash(git diff)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git branch *)",
+      "Bash(git switch -c feature/*)",
+      "Bash(git checkout -b feature/*)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push -u origin feature/*)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr view *)"
     ],
     "deny": [
       "Read(./.env)",
-      "Bash(git push origin main:*)",
-      "Bash(git push --force:*)"
+      "Bash(git push origin main*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)"
     ]
   }
 }
