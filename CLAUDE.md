@@ -14,7 +14,7 @@ Backlogの課題が完了したら、リリース紹介動画が自動ででき�
 - 課題は Backlog MCP（`backlog`）で読む。課題キーの形式は `AISTUDYDEMO-1`
 - ブランチ名は `feature/<課題キー>`（例：`feature/AISTUDYDEMO-1`）。main に直接コミットしない
 - コミットメッセージとPRタイトルの先頭に `[<課題キー>]` を付ける
-- PR本文には次の3つを書く：課題へのリンク（`https://<BACKLOG_DOMAIN>/view/<課題キー>`）、変更内容（利用者から見た変化）、確認したテストケース
+- PR本文には次の3つを書く：課題へのリンク（`https://<BACKLOG_DOMAIN>/view/<課題キー>`。ドメインは `printenv BACKLOG_DOMAIN` で取得する）、変更内容（利用者から見た変化）、確認したテストケース
 - PRを作る前に `npm run typecheck` と `npm test` を通す。テストケースは課題の受け入れ条件ごとに追加する
 - 課題の対象が `app/` のときは `pipeline/`、`video/`、`.github/` を変更しない
 - 判断に迷う仕様は勝手に決めず、PR本文の「確認したいこと」に書く
